@@ -2041,10 +2041,14 @@ System.register("board/physics", ["pixi.js", "matter-js", "renderer", "parts/gea
                     }
                 }
                 beforeUpdate() {
-                    this.addNeighborParts(this._boardChangeCounter !== this.board.changeCounter);
+                    const partsChanged = this.addNeighborParts(this._boardChangeCounter !== this.board.changeCounter);
                     this._boardChangeCounter = this.board.changeCounter;
                     for (const partBody of this._parts.values()) {
                         partBody.updateBodyFromPart();
+                    }
+                    // if parts have been added or removed, update the broadphase grid
+                    if ((partsChanged) && (this.engine.broadphase)) {
+                        matter_js_2.Grid.update(this.engine.broadphase, matter_js_2.Composite.allBodies(this.engine.world), this.engine, true);
                     }
                 }
                 afterUpdate() {
@@ -2181,6 +2185,8 @@ System.register("board/physics", ["pixi.js", "matter-js", "renderer", "parts/gea
                     this._wallWidth = w;
                     this._wallHeight = h;
                 }
+                // update the working set of parts to include those that are near balls,
+                //  and return whether parts have been added or removed
                 addNeighborParts(force = false) {
                     // track parts to add and remove
                     const addParts = new Set();
@@ -2234,6 +2240,7 @@ System.register("board/physics", ["pixi.js", "matter-js", "renderer", "parts/gea
                         this.addPart(part);
                     for (const part of removeParts)
                         this.removePart(part);
+                    return ((addParts.size > 0) || (removeParts.size > 0));
                 }
                 addPart(part) {
                     if (this._parts.has(part))
@@ -2819,7 +2826,9 @@ System.register("board/serializer", ["parts/drop"], function (exports_24, contex
                     const a = document.createElement('a');
                     a.setAttribute('href', url);
                     a.setAttribute('download', 'ttsim.png');
+                    document.body.appendChild(a);
                     a.click();
+                    document.body.removeChild(a);
                     return (true);
                 }
                 upload(callback) {
@@ -4678,6 +4687,10 @@ System.register("board/board", ["pixi-filters", "parts/fence", "parts/gearbit", 
                     this.view.addListener('mousemove', this._onMouseMove.bind(this));
                     this.view.addListener('mouseup', this._onMouseUp.bind(this));
                     this.view.addListener('click', this._onClick.bind(this));
+                    this.view.addListener('touchstart', this._onMouseDown.bind(this));
+                    this.view.addListener('touchmove', this._onMouseMove.bind(this));
+                    this.view.addListener('touchend', this._onMouseUp.bind(this));
+                    this.view.addListener('tap', this._onClick.bind(this));
                 }
                 _bindKeyEvents() {
                     const ctrl = keyboard_1.makeKeyHandler('Control');
@@ -5326,6 +5339,7 @@ System.register("ui/button", ["pixi.js", "ui/config", "renderer"], function (exp
                     this._buttons.push(button);
                     this.addChild(button);
                     button.addListener('click', this._onButtonClick.bind(this));
+                    button.addListener('tap', this._onButtonClick.bind(this));
                     this._layout();
                 }
                 // handle buttons being clicked
@@ -5629,6 +5643,7 @@ System.register("ui/actionbar", ["pixi.js", "board/board", "ui/button", "ui/conf
                     this._drawer.peer = this;
                     this.addChildAt(this._drawer, 0);
                     this._drawer.visible = false;
+                    this._drawer.autowidth = false;
                     // add a button to show and hide extra board operations
                     this._drawerButton = new button_2.SpriteButton(new PIXI.Sprite(board.partFactory.textures['board-drawer']));
                     this.addButton(this._drawerButton);
@@ -5664,9 +5679,10 @@ System.register("ui/actionbar", ["pixi.js", "board/board", "ui/button", "ui/conf
                     this.updateToggled();
                     // zoom on wheel events
                     document.addEventListener('wheel', (e) => {
-                        if (e.wheelDelta > 0)
+                        console.log(e);
+                        if ((e.deltaY < 0) || (e.deltaX < 0) || (e.deltaZ < 0))
                             this.zoomIn();
-                        else if (e.wheelDelta < 0)
+                        else if ((e.deltaY > 0) || (e.deltaX > 0) || (e.deltaZ > 0))
                             this.zoomOut();
                         e.preventDefault();
                     });
