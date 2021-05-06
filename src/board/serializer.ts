@@ -9,6 +9,7 @@ export interface IBoardSerializer {
   onUIStateChanged():void;
   save():void;
   restore(callback:(restored:boolean) => void):void;
+  restoreFromHash(hash: string, callback:(restored:boolean) => void):void;
 }
 
 export class URLBoardSerializer implements IBoardSerializer {
@@ -69,6 +70,10 @@ export class URLBoardSerializer implements IBoardSerializer {
   public restore(callback:(restored:boolean) => void):void {
     // if there is no hash, there's nothing to restore
     const hash = window.location.hash.substr(1);
+    this.restoreFromHash(hash, callback);
+  }
+
+  public restoreFromHash(hash: string, callback:(restored:boolean) => void):void {
     if (hash.length == 0) {
       callback(false);
       return;
@@ -87,6 +92,7 @@ export class URLBoardSerializer implements IBoardSerializer {
       this._restoring = false;
     }
   }
+
   private _restoring:boolean = false;
 
   public download():boolean {

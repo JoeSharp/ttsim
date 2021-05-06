@@ -10,9 +10,11 @@ import { PhysicalBallRouter } from 'board/physics';
 import { makeKeyHandler } from 'ui/keyboard';
 import { GearBase } from 'parts/gearbit';
 
+import { challenges } from './challenges'
+
 export class SimulatorApp extends PIXI.Container {
 
-  constructor(public readonly textures:PIXI.loaders.TextureDictionary) {
+  constructor(public readonly textures: PIXI.loaders.TextureDictionary) {
     super();
     this.partFactory = new PartFactory(textures);
     this.board = new Board(this.partFactory);
@@ -26,51 +28,71 @@ export class SimulatorApp extends PIXI.Container {
     this._layout();
     // add event listeners
     this._addKeyHandlers();
+    this._buildUserInterface();
   }
-  public readonly partFactory:PartFactory;
-  public readonly board:Board;
-  public readonly toolbar:Toolbar;
-  public readonly actionbar:Actionbar;
-  public readonly physicalRouter:PhysicalBallRouter;
+  public readonly partFactory: PartFactory;
+  public readonly board: Board;
+  public readonly toolbar: Toolbar;
+  public readonly actionbar: Actionbar;
+  public readonly physicalRouter: PhysicalBallRouter;
 
-  public update(delta:number):void {
+  public update(delta: number): void {
     Animator.current.update(delta);
     this.board.update(delta);
     GearBase.update();
     Renderer.render();
   }
 
-  public get width():number { return(this._width); }
-  public set width(v:number) {
+  public get width(): number { return (this._width); }
+  public set width(v: number) {
     if (v === this._width) return;
     this._width = v;
     this._layout();
   }
-  private _width:number = 0;
+  private _width: number = 0;
 
-  public get height():number { return(this._height); }
-  public set height(v:number) {
+  public get height(): number { return (this._height); }
+  public set height(v: number) {
     if (v === this._height) return;
     this._height = v;
     this._layout();
   }
-  private _height:number = 0;
+  private _height: number = 0;
 
-  protected _layout():void {
+  protected _layout(): void {
     this.toolbar.height = this.height;
     this.actionbar.height = this.height;
     this.actionbar.x = this.width - this.actionbar.width;
     this.board.view.x = this.toolbar.width;
-    this.board.width = Math.max(0, 
+    this.board.width = Math.max(0,
       this.width - (this.toolbar.width + this.actionbar.width));
     this.board.height = this.height;
     Renderer.needsUpdate();
   }
 
-  protected _addKeyHandlers():void {
-    makeKeyHandler('w').press = () => { 
-      this.board.physicalRouter.showWireframe = 
-        ! this.board.physicalRouter.showWireframe; };
+  protected _addKeyHandlers(): void {
+    makeKeyHandler('w').press = () => {
+      this.board.physicalRouter.showWireframe =
+        !this.board.physicalRouter.showWireframe;
+    };
   }
 
+  protected _buildUserInterface(): void {
+    const that = this;
+    let selectChallenge: HTMLSelectElement = document.getElementById('selectChallenge') as HTMLSelectElement;
+    challenges.forEach((challenge, i) => {
+      var option = document.createElement("option");
+      option.text = `${i + 1} - ${challenge.title}`;
+      option.value = i.toString(10);
+      selectChallenge.appendChild(option);
+    });
+
+    let cmdStartChallenge = document.getElementById('cmdStartChallenge')
+    cmdStartChallenge.addEventListener('click', (e) => {
+      const challenge = challenges[parseInt(selectChallenge.value, 10)];
+      that.board.serializer.restoreFromHash(challenge.start, (success) => {
+        console.log('Success', success);
+      })
+    })
+  }
 }

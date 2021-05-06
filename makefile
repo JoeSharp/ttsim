@@ -13,7 +13,7 @@ server:
 
 app: dependencies docs/index.html docs/app.js
 
-docs/index.html: src/index.html
+docs/index.html: src/index.html src/index.css
 	mkdir -p docs
 	cp src/index.html docs/index.html
 	cp src/index.css docs/index.css
