@@ -87,20 +87,30 @@ export class SimulatorApp extends PIXI.Container {
       selectChallenge.appendChild(option);
     });
 
+    // Start Challenge Button
     let cmdStartChallenge = document.getElementById('cmdStartChallenge')
-    cmdStartChallenge.addEventListener('click', (e) => {
+    cmdStartChallenge.addEventListener('click', () => {
       const challenge = challenges[parseInt(selectChallenge.value, 10)];
       that.board.serializer.restoreFromHash(challenge.start, (success) => {
         console.log('Success', success);
       })
     })
 
+    // See Solution Button
     let cmdSeeSolution = document.getElementById('cmdSeeSolution')
-    cmdSeeSolution.addEventListener('click', (e) => {
+    cmdSeeSolution.addEventListener('click', () => {
       const challenge = challenges[parseInt(selectChallenge.value, 10)];
       that.board.serializer.restoreFromHash(challenge.solution, (success) => {
         console.log('Success', success);
       })
     })
+
+    // Hand in Work Button
+    let txtOutputBalls = document.getElementById('txtOutputBalls');
+    let cmdEvaluate = document.getElementById('cmdEvaluate');
+    cmdEvaluate.addEventListener('click', () => {
+      const ballsAtRest = this.board.getOutputBalls();
+      txtOutputBalls.setAttribute('value', ballsAtRest.map(b => b.hue === 0 ? 'red' : 'blue').join(', '));
+    });
   }
 }

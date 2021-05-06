@@ -3507,6 +3507,29 @@ System.register("board/board", ["pixi-filters", "parts/fence", "parts/gearbit", 
                     if (this.serializer)
                         this.serializer.onUIStateChanged();
                 }
+                getOutputBalls() {
+                    if (!this.areBallsAtRest) {
+                        return []; // Can't really do this yet
+                    }
+                    let lowestTurnstile = 0;
+                    for (const row of this._grid) {
+                        for (const part of row) {
+                            if (part instanceof turnstile_3.Turnstile) {
+                                if (part.y > lowestTurnstile) {
+                                    lowestTurnstile = part.y;
+                                }
+                            }
+                        }
+                    }
+                    const outputBalls = [];
+                    this.balls.forEach(ball => {
+                        if (ball.y > lowestTurnstile) {
+                            outputBalls.push(ball);
+                        }
+                    });
+                    outputBalls.sort((a, b) => b.y - a.y); // Read right to left
+                    return outputBalls;
+                }
                 // whether to show parts in schematic form
                 get schematicView() {
                     return ((this._schematic) || (this.spacing <= this.partSize));
@@ -6174,19 +6197,28 @@ System.register("app", ["pixi.js", "board/board", "parts/factory", "ui/toolbar",
                         option.value = i.toString(10);
                         selectChallenge.appendChild(option);
                     });
+                    // Start Challenge Button
                     let cmdStartChallenge = document.getElementById('cmdStartChallenge');
-                    cmdStartChallenge.addEventListener('click', (e) => {
+                    cmdStartChallenge.addEventListener('click', () => {
                         const challenge = challenges_2.challenges[parseInt(selectChallenge.value, 10)];
                         that.board.serializer.restoreFromHash(challenge.start, (success) => {
                             console.log('Success', success);
                         });
                     });
+                    // See Solution Button
                     let cmdSeeSolution = document.getElementById('cmdSeeSolution');
-                    cmdSeeSolution.addEventListener('click', (e) => {
+                    cmdSeeSolution.addEventListener('click', () => {
                         const challenge = challenges_2.challenges[parseInt(selectChallenge.value, 10)];
                         that.board.serializer.restoreFromHash(challenge.solution, (success) => {
                             console.log('Success', success);
                         });
+                    });
+                    // Hand in Work Button
+                    let txtOutputBalls = document.getElementById('txtOutputBalls');
+                    let cmdEvaluate = document.getElementById('cmdEvaluate');
+                    cmdEvaluate.addEventListener('click', () => {
+                        const ballsAtRest = this.board.getOutputBalls();
+                        txtOutputBalls.setAttribute('value', ballsAtRest.map(b => b.hue === 0 ? 'red' : 'blue').join(', '));
                     });
                 }
             };

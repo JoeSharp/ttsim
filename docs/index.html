@@ -12,15 +12,19 @@
     <div id="container"></div>
     <div id='ui'>
       <form class="w3-container">
-        <div style="width: 200px;">
+        <div style="width: 400px;">
           <label>Challenge</label>
           <select class='w3-input' id='selectChallenge'></select>
+        </div>
+        <div style="width: 400px;">
+          <label>Output</label>
+          <input class='w3-input' readonly id='txtOutputBalls'>
         </div>
       </form>
 
       <button id='cmdStartChallenge'>Start Challenge</button>
       <button id='cmdSeeSolution'>See Solution</button>
-      <button id='cmdHandInChallenge'>Hand in Challenge</button>
+      <button id='cmdEvaluate'>Hand in Challenge</button>
     </div>
   </div>
   <img id="loading" src="images/loading.gif" />
