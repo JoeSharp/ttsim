@@ -1,46 +1,56 @@
 <html>
-  <head>
-    <link rel="shortcut icon" href="images/icon.png">
-    <title>Turing Tumble Simulator</title>
-    <link rel="stylesheet" href='./index.css'>
-  </head>
-  <body>
+
+<head>
+  <link rel="shortcut icon" href="images/icon.png">
+  <title>Turing Tumble Simulator</title>
+  <link rel="stylesheet" href='./index.css'>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+
+<body>
+  <div id='app'>
     <div id="container"></div>
     <div id='ui'>
-      <label>Challenge</label>
-      <select id='selectChallenge'></select>
+      <form class="w3-container">
+        <div style="width: 200px;">
+          <label>Challenge</label>
+          <select class='w3-input' id='selectChallenge'></select>
+        </div>
+      </form>
 
       <button id='cmdStartChallenge'>Start Challenge</button>
       <button id='cmdSeeSolution'>See Solution</button>
       <button id='cmdHandInChallenge'>Hand in Challenge</button>
     </div>
-    <img id="loading" src="images/loading.gif" />
-    <script src="system.js" type="text/javascript"></script>
-    <script src="app.js" type="text/javascript"></script>
-    <script type="text/javascript">
-      SystemJS.config({
-        map: {
-          'pixi.js': './pixi.min.js',
-          'pixi-filters': './pixi-filters.js',
-          'matter-js': './matter.min.js'
+  </div>
+  <img id="loading" src="images/loading.gif" />
+  <script src="system.js" type="text/javascript"></script>
+  <script src="app.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    SystemJS.config({
+      map: {
+        'pixi.js': './pixi.min.js',
+        'pixi-filters': './pixi-filters.js',
+        'matter-js': './matter.min.js'
+      },
+      meta: {
+        'pixi.js': {
+          format: 'global',
+          exports: 'PIXI',
+          esModule: true
         },
-        meta: {
-          'pixi.js': {
-            format: 'global',
-            exports: 'PIXI',
-            esModule: true
-          },
-          'pixi-filters': {
-            deps: [ 'pixi.js' ],
-            format: 'global',
-            exports: 'PIXI.filters',
-            esModule: true
-          },
-          'matter-js': { esModule: true },
-          'poly-decomp': { esModule: true },
-        }
-      });
-      SystemJS.import('index');
-    </script>
-  </body>
+        'pixi-filters': {
+          deps: ['pixi.js'],
+          format: 'global',
+          exports: 'PIXI.filters',
+          esModule: true
+        },
+        'matter-js': { esModule: true },
+        'poly-decomp': { esModule: true },
+      }
+    });
+    SystemJS.import('index');
+  </script>
+</body>
+
 </html>
