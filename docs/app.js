@@ -5681,14 +5681,12 @@ System.register("ui/actionbar", ["pixi.js", "board/board", "ui/button", "ui/conf
                     this.bottomCount = 3;
                     this.updateToggled();
                     // zoom on wheel events
-                    document.addEventListener('wheel', (e) => {
-                        console.log(e);
-                        if ((e.deltaY < 0) || (e.deltaX < 0) || (e.deltaZ < 0))
-                            this.zoomIn();
-                        else if ((e.deltaY > 0) || (e.deltaX > 0) || (e.deltaZ > 0))
-                            this.zoomOut();
-                        e.preventDefault();
-                    });
+                    // document.addEventListener('wheel', (e:WheelEvent) => {
+                    //   console.log(e);
+                    //   if ((e.deltaY < 0) || (e.deltaX < 0) || (e.deltaZ < 0)) this.zoomIn();
+                    //   else if ((e.deltaY > 0) || (e.deltaX > 0) || (e.deltaZ > 0)) this.zoomOut();
+                    //   e.preventDefault();
+                    // });
                 }
                 onButtonClick(button) {
                     if (button === this._schematicButton) {

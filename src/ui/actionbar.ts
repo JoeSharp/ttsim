@@ -10,7 +10,7 @@ import { BoardBuilder } from 'board/builder';
 
 export class Actionbar extends ButtonBar {
 
-  constructor(public readonly board:Board) {
+  constructor(public readonly board: Board) {
     super();
     // add the drawer behind the background
     this._drawer = new BoardDrawer(this.board);
@@ -49,7 +49,7 @@ export class Actionbar extends ButtonBar {
     this.addButton(this._returnButton);
 
     // add more top buttons here...
-    
+
     // add a link to documentation
     this._helpButton = new SpriteButton(
       new PIXI.Sprite(board.partFactory.textures['help']));
@@ -65,29 +65,29 @@ export class Actionbar extends ButtonBar {
     this.bottomCount = 3;
     this.updateToggled();
     // zoom on wheel events
-    document.addEventListener('wheel', (e:WheelEvent) => {
-      console.log(e);
-      if ((e.deltaY < 0) || (e.deltaX < 0) || (e.deltaZ < 0)) this.zoomIn();
-      else if ((e.deltaY > 0) || (e.deltaX > 0) || (e.deltaZ > 0)) this.zoomOut();
-      e.preventDefault();
-    });
+    // document.addEventListener('wheel', (e:WheelEvent) => {
+    //   console.log(e);
+    //   if ((e.deltaY < 0) || (e.deltaX < 0) || (e.deltaZ < 0)) this.zoomIn();
+    //   else if ((e.deltaY > 0) || (e.deltaX > 0) || (e.deltaZ > 0)) this.zoomOut();
+    //   e.preventDefault();
+    // });
   }
-  private _schematicButton:Button;
-  private _zoomInButton:Button;
-  private _zoomOutButton:Button;
-  private _zoomToFitButton:Button;
-  private _fasterButton:Button;
-  private _slowerButton:Button;
-  private _returnButton:Button;
-  private _helpButton:Button;
-  private _githubButton:Button;
-  private _heartButton:Button;
-  private _drawerButton:Button;
-  private _drawer:BoardDrawer;
+  private _schematicButton: Button;
+  private _zoomInButton: Button;
+  private _zoomOutButton: Button;
+  private _zoomToFitButton: Button;
+  private _fasterButton: Button;
+  private _slowerButton: Button;
+  private _returnButton: Button;
+  private _helpButton: Button;
+  private _githubButton: Button;
+  private _heartButton: Button;
+  private _drawerButton: Button;
+  private _drawer: BoardDrawer;
 
-  protected onButtonClick(button:Button):void {
+  protected onButtonClick(button: Button): void {
     if (button === this._schematicButton) {
-      this.board.schematic = ! this.board.schematicView;
+      this.board.schematic = !this.board.schematicView;
       this.updateToggled();
       if (this.peer) this.peer.updateToggled();
     }
@@ -115,14 +115,14 @@ export class Actionbar extends ButtonBar {
       const user = m ? m[1] : 'jessecrossen';
       m = window.location.pathname.match(new RegExp('/*([^/?#]+)'));
       const repo = m ? m[1] : 'ttsim';
-      window.open('https://github.com/'+user+'/'+repo+'/', '_blank');
+      window.open('https://github.com/' + user + '/' + repo + '/', '_blank');
     }
     else if (button === this._heartButton) {
       window.open('https://www.turingtumble.com/', '_blank');
     }
   }
 
-  public updateToggled():void {
+  public updateToggled(): void {
     // update button toggle states
     for (const button of this._buttons) {
       if (button === this._schematicButton) {
@@ -149,72 +149,72 @@ export class Actionbar extends ButtonBar {
 
   // SPEED CONTROL ************************************************************
 
-  public get canGoFaster():boolean {
-    return(this.speedIndex < Speeds.length - 1);
+  public get canGoFaster(): boolean {
+    return (this.speedIndex < Speeds.length - 1);
   }
-  public get canGoSlower():boolean {
-    return(this.speedIndex > 0);
+  public get canGoSlower(): boolean {
+    return (this.speedIndex > 0);
   }
 
-  public goFaster():void {
+  public goFaster(): void {
     this.speedIndex++;
   }
 
-  public goSlower():void {
+  public goSlower(): void {
     this.speedIndex--;
   }
 
-  protected get speedIndex():number {
-    return(Speeds.indexOf(this.board.speed));
+  protected get speedIndex(): number {
+    return (Speeds.indexOf(this.board.speed));
   }
-  protected set speedIndex(i:number) {
+  protected set speedIndex(i: number) {
     if ((i >= 0) && (i < Speeds.length)) this.board.speed = Speeds[i];
     this.updateToggled();
   }
 
   // ZOOMING ******************************************************************
 
-  public get canZoomIn():boolean {
-    return(this.zoomIndex < Zooms.length - 1);
+  public get canZoomIn(): boolean {
+    return (this.zoomIndex < Zooms.length - 1);
   }
-  public get canZoomOut():boolean {
-    return(this.zoomIndex > 0);
+  public get canZoomOut(): boolean {
+    return (this.zoomIndex > 0);
   }
 
-  public zoomIn():void {
-    if (! this.canZoomIn) return;
+  public zoomIn(): void {
+    if (!this.canZoomIn) return;
     this.board.partSize = Zooms[this.zoomIndex + 1];
     this.updateToggled();
   }
-  
-  public zoomOut():void {
-    if (! this.canZoomOut) return;
+
+  public zoomOut(): void {
+    if (!this.canZoomOut) return;
     this.board.partSize = Zooms[this.zoomIndex - 1];
     this.updateToggled();
   }
 
   // zoom to fit the board
-  public zoomToFit():void {
+  public zoomToFit(): void {
     this.board.centerColumn = (this.board.columnCount - 1) / 2;
     this.board.centerRow = (this.board.rowCount - 1) / 2;
-    let s:number = Zooms[0];
-    for (let i:number = Zooms.length - 1; i >= 0; i--) {
+    let s: number = Zooms[0];
+    for (let i: number = Zooms.length - 1; i >= 0; i--) {
       s = Zooms[i];
-      const w:number = this.board.columnCount * Math.floor(s * SPACING_FACTOR);
-      const h:number = this.board.rowCount * Math.floor(s * SPACING_FACTOR);
+      const w: number = this.board.columnCount * Math.floor(s * SPACING_FACTOR);
+      const h: number = this.board.rowCount * Math.floor(s * SPACING_FACTOR);
       if ((w <= this.board.width) && (h <= this.board.height)) break;
     }
     this.board.partSize = s;
     this.updateToggled();
   }
 
-  protected get zoomIndex():number {
-    return(Zooms.indexOf(this.board.partSize));
+  protected get zoomIndex(): number {
+    return (Zooms.indexOf(this.board.partSize));
   }
 
   // DRAWER *******************************************************************
 
-  protected _layout():void {
+  protected _layout(): void {
     super._layout();
     if (this._drawer) {
       this._drawer.width = this.width;
@@ -223,12 +223,12 @@ export class Actionbar extends ButtonBar {
     }
   }
 
-  public toggleDrawer():void {
-    if (! this._drawer.visible) {
+  public toggleDrawer(): void {
+    if (!this._drawer.visible) {
       this._drawerButton.scale.x = - Math.abs(this._drawerButton.scale.x);
       this._drawer.visible = true;
       this._drawer.x = 0;
-      Animator.current.animate(this._drawer, 'x', 0, -this.width, 
+      Animator.current.animate(this._drawer, 'x', 0, -this.width,
         Delays.SHOW_CONTROL);
       this.updateToggled();
     }
@@ -246,7 +246,7 @@ export class Actionbar extends ButtonBar {
 
 export class BoardDrawer extends ButtonBar {
 
-  constructor(public readonly board:Board) {
+  constructor(public readonly board: Board) {
     super();
     // add standard boards in several sizes
     this._smallButton = new SpriteButton(
@@ -273,15 +273,15 @@ export class BoardDrawer extends ButtonBar {
       new PIXI.Sprite(board.partFactory.textures['upload']));
     this.addButton(this._uploadButton);
   }
-  private _smallButton:Button;
-  private _mediumButton:Button;
-  private _largeButton:Button;
-  private _clearButton:Button;
-  private _downloadButton:Button;
-  private _uploadButton:Button;
-  private _clearBallsButton:Button;
+  private _smallButton: Button;
+  private _mediumButton: Button;
+  private _largeButton: Button;
+  private _clearButton: Button;
+  private _downloadButton: Button;
+  private _uploadButton: Button;
+  private _clearBallsButton: Button;
 
-  protected onButtonClick(button:Button):void {
+  protected onButtonClick(button: Button): void {
     if (button === this._smallButton) {
       BoardBuilder.initStandardBoard(this.board, 5, 11);
       this.zoomToFit();
@@ -308,17 +308,17 @@ export class BoardDrawer extends ButtonBar {
     }
     else if (button === this._uploadButton) {
       if (this.board.serializer instanceof URLBoardSerializer) {
-        this.board.serializer.upload((restored:boolean) => {
+        this.board.serializer.upload((restored: boolean) => {
           if (restored) this.zoomToFit();
         });
       }
     }
   }
 
-  protected zoomToFit():void {
+  protected zoomToFit(): void {
     if (this.peer instanceof Actionbar) this.peer.zoomToFit();
   }
 
-  public updateToggled():void { }
+  public updateToggled(): void { }
 
 }
