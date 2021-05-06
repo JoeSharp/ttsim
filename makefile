@@ -16,6 +16,7 @@ app: dependencies docs/index.html docs/app.js
 docs/index.html: src/index.html
 	mkdir -p docs
 	cp src/index.html docs/index.html
+	cp src/index.css docs/index.css
 
 docs/app.js: node_modules $(shell find src -name '*.ts')
 	mkdir -p docs
