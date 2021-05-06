@@ -6183,6 +6183,13 @@ System.register("app", ["pixi.js", "board/board", "parts/factory", "ui/toolbar",
                             console.log('Success', success);
                         });
                     });
+                    let cmdSeeSolution = document.getElementById('cmdSeeSolution');
+                    cmdSeeSolution.addEventListener('click', (e) => {
+                        const challenge = challenges_2.challenges[parseInt(selectChallenge.value, 10)];
+                        that.board.serializer.restoreFromHash(challenge.solution, (success) => {
+                            console.log('Success', success);
+                        });
+                    });
                 }
             };
             exports_35("SimulatorApp", SimulatorApp);

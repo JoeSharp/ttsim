@@ -94,5 +94,13 @@ export class SimulatorApp extends PIXI.Container {
         console.log('Success', success);
       })
     })
+
+    let cmdSeeSolution = document.getElementById('cmdSeeSolution')
+    cmdSeeSolution.addEventListener('click', (e) => {
+      const challenge = challenges[parseInt(selectChallenge.value, 10)];
+      that.board.serializer.restoreFromHash(challenge.solution, (success) => {
+        console.log('Success', success);
+      })
+    })
   }
 }
